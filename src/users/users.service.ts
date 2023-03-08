@@ -1,6 +1,10 @@
-import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 import * as uuid from 'uuid';
 import { ulid } from 'ulid';
 
@@ -13,6 +17,7 @@ import { UserEntity } from 'src/users/entity/user.entity';
 export class UsersService {
   constructor(
     private emailService: EmailService,
+    private dataSource: DataSource,
 
     @InjectRepository(UserEntity)
     private usersRepository: Repository<UserEntity>,
@@ -30,6 +35,12 @@ export class UsersService {
     const signupVerifyToken = uuid.v1();
 
     await this.saveUser(name, email, password, signupVerifyToken);
+    // await this.saveUserUsingTransaction(
+    //   name,
+    //   email,
+    //   password,
+    //   signupVerifyToken,
+    // );
     await this.sendMemberJoinEmail(email, signupVerifyToken);
   }
 
@@ -46,8 +57,6 @@ export class UsersService {
   }
 
   private async checkUserExists(emailAddress: string): Promise<boolean> {
-    console.log('@@@@@@@');
-    console.log(emailAddress);
     const user = await this.usersRepository.findOne({
       where: { email: emailAddress },
     });
@@ -71,9 +80,62 @@ export class UsersService {
   }
 
   private async sendMemberJoinEmail(email: string, signupVerifyToken: string) {
+    // 이메일 보내기 로직은 임시로 주석처리
     // await this.emailService.sendMemberJoinVerification(
     //   email,
     //   signupVerifyToken,
     // );
+  }
+
+  private async saveUserUsingQueryRunner(
+    name: string,
+    email: string,
+    password: string,
+    signupVerifyToken: string,
+  ) {
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const user = new UserEntity();
+      user.id = ulid();
+      user.name = name;
+      user.email = email;
+      user.password = password;
+      user.signupVerifyToken = signupVerifyToken;
+
+      await queryRunner.manager.save(user);
+
+      // throw new InternalServerErrorException(); // 고의 에러발생
+
+      await queryRunner.commitTransaction();
+    } catch (e) {
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  private async saveUserUsingTransaction(
+    name: string,
+    email: string,
+    password: string,
+    signupVerifyToken: string,
+  ) {
+    await this.dataSource.transaction(async (manager) => {
+      const user = new UserEntity();
+      user.id = ulid();
+      user.name = name;
+      user.email = email;
+      user.password = password;
+      user.signupVerifyToken = signupVerifyToken;
+
+      await manager.save(user);
+
+      // 고의 에러
+      // throw new InternalServerErrorException();
+    });
   }
 }
