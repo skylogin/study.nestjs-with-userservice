@@ -8,13 +8,13 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import emailConfig from './config/emailConfig';
+import authConfig from './config/authConfig';
 import { validationSchema } from './config/validationSchema';
 
 import { LoggerMiddleware } from './logger/logger.middleware';
 import { Logger2Middleware } from './logger/logger2.middleware';
 
 import { UsersModule } from './users/users.module';
-import { EmailModule } from './email/email.module';
 import { AppController } from './app.controller';
 import { UsersController } from './users/users.controller';
 
@@ -22,7 +22,7 @@ import { UsersController } from './users/users.controller';
   imports: [
     ConfigModule.forRoot({
       envFilePath: [`${__dirname}/config/env/.${process.env.NODE_ENV}.env`],
-      load: [emailConfig],
+      load: [emailConfig, authConfig],
       isGlobal: true,
       validationSchema,
     }),
@@ -37,7 +37,6 @@ import { UsersController } from './users/users.controller';
       synchronize: Boolean(process.env.DATABASE_SYNCHRONIZE),
     }),
     UsersModule,
-    EmailModule,
   ],
   controllers: [AppController],
   providers: [ConfigService],
