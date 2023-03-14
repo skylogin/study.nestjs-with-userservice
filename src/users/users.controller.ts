@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserLoginDto } from './dto/user-login.dto';
@@ -14,6 +15,7 @@ import { UserInfo } from './UserInfo';
 
 import { UsersService } from './users.service';
 import { AuthService } from 'src/auth/auth.service';
+import { AuthGuard } from 'src/auth.guard';
 
 @Controller('users')
 export class UsersController {
@@ -41,13 +43,12 @@ export class UsersController {
     return await this.usersService.login(email, password);
   }
 
+  @UseGuards(AuthGuard)
   @Get('/:id')
   async getUserInfo(
     @Headers() headers: any,
     @Param('id') userId: string,
   ): Promise<UserInfo> {
-    const jwtString = headers.authorization.split('Bearer')[1];
-    this.authService.verify(jwtString);
     return await this.usersService.getUserInfo(userId);
   }
 }
