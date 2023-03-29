@@ -26,6 +26,7 @@ import { ExceptionModule } from './exception/exception.module';
 import { AppController } from './app.controller';
 import { UsersController } from './users/users.controller';
 import { LoggingModule } from './interceptor/logging.module';
+import { Batchmodule } from './batch/batch.module';
 
 @Module({
   imports: [
@@ -60,6 +61,7 @@ import { LoggingModule } from './interceptor/logging.module';
     }),
     ExceptionModule,
     LoggingModule,
+    Batchmodule,
     UsersModule,
   ],
   controllers: [AppController],
