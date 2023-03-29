@@ -8,6 +8,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from 'src/auth/auth.module';
 import { CqrsModule } from '@nestjs/cqrs';
 import { CreateUserHandler } from './command/create-user.handler';
+import { UserEventHandler } from 'src/event/user-event.handler';
 
 @Module({
   imports: [
@@ -17,6 +18,6 @@ import { CreateUserHandler } from './command/create-user.handler';
     CqrsModule,
   ],
   controllers: [UsersController],
-  providers: [UsersService, Logger, CreateUserHandler],
+  providers: [UsersService, Logger, CreateUserHandler, UserEventHandler],
 })
 export class UsersModule {}

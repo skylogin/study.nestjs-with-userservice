@@ -10,6 +10,9 @@ import { ulid } from 'ulid';
 import { CreateUserCommand } from './create-user.command';
 import { UserEntity } from 'src/users/entity/user.entity';
 
+import { UserCreatedEvent } from 'src/event/user-created.event';
+import { TestEvent } from 'src/event/test.event';
+
 @Injectable()
 @CommandHandler(CreateUserCommand)
 export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
@@ -41,6 +44,9 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
       password,
       signupVerifyToken,
     );
+
+    this.eventBus.publish(new UserCreatedEvent(email, signupVerifyToken));
+    this.eventBus.publish(new TestEvent());
   }
 
   private async checkUserExists(emailAddress: string): Promise<boolean> {
