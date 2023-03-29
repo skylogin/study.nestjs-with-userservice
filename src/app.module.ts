@@ -7,6 +7,12 @@ import {
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import * as winston from 'winston';
+import {
+  utilities as nestWinstonModuleUtilities,
+  WinstonModule,
+} from 'nest-winston';
+
 import emailConfig from './config/emailConfig';
 import authConfig from './config/authConfig';
 import { validationSchema } from './config/validationSchema';
@@ -25,6 +31,19 @@ import { UsersController } from './users/users.controller';
       load: [emailConfig, authConfig],
       isGlobal: true,
       validationSchema,
+    }),
+    WinstonModule.forRoot({
+      transports: [
+        new winston.transports.Console({
+          level: process.env.NODE_ENV === 'production' ? 'info' : 'silly',
+          format: winston.format.combine(
+            winston.format.timestamp(),
+            nestWinstonModuleUtilities.format.nestLike('MyApp', {
+              prettyPrint: true,
+            }),
+          ),
+        }),
+      ],
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
