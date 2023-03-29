@@ -9,6 +9,7 @@ import { AuthModule } from 'src/auth/auth.module';
 import { CqrsModule } from '@nestjs/cqrs';
 import { CreateUserHandler } from './command/create-user.handler';
 import { UserEventHandler } from 'src/event/user-event.handler';
+import { GetUserInfoQueryHandler } from './query/get-user-info.handler';
 
 @Module({
   imports: [
@@ -18,6 +19,12 @@ import { UserEventHandler } from 'src/event/user-event.handler';
     CqrsModule,
   ],
   controllers: [UsersController],
-  providers: [UsersService, Logger, CreateUserHandler, UserEventHandler],
+  providers: [
+    UsersService,
+    Logger,
+    CreateUserHandler,
+    UserEventHandler,
+    GetUserInfoQueryHandler,
+  ],
 })
 export class UsersModule {}

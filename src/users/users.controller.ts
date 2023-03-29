@@ -25,8 +25,9 @@ import {
   WINSTON_MODULE_PROVIDER,
   WINSTON_MODULE_NEST_PROVIDER,
 } from 'nest-winston';
-import { CommandBus } from '@nestjs/cqrs';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreateUserCommand } from './command/create-user.command';
+import { GetUserInfoQuery } from './query/get-user-info.query';
 
 @Controller('users')
 // @UseFilters(HttpExceptionFilter)
@@ -39,6 +40,7 @@ export class UsersController {
     private readonly logger2: LoggerService,
     @Inject(Logger) private readonly logger3: LoggerService,
     private commandBus: CommandBus,
+    private queryBus: QueryBus,
   ) {}
 
   // @UseFilters(HttpExceptionFilter)
@@ -70,10 +72,12 @@ export class UsersController {
   @UseGuards(AuthGuard)
   @Get('/:id')
   async getUserInfo(
-    @Headers() headers: any,
+    // @Headers() headers: any,
     @Param('id') userId: string,
   ): Promise<UserInfo> {
-    return await this.usersService.getUserInfo(userId);
+    const getUserInfoQuery = new GetUserInfoQuery(userId);
+    return this.queryBus.execute(getUserInfoQuery);
+    // return await this.usersService.getUserInfo(userId);
   }
 
   private printWinstonLog(dto) {
