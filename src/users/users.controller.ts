@@ -25,6 +25,8 @@ import {
   WINSTON_MODULE_PROVIDER,
   WINSTON_MODULE_NEST_PROVIDER,
 } from 'nest-winston';
+import { CommandBus } from '@nestjs/cqrs';
+import { CreateUserCommand } from './command/create-user.command';
 
 @Controller('users')
 // @UseFilters(HttpExceptionFilter)
@@ -36,6 +38,7 @@ export class UsersController {
     @Inject(WINSTON_MODULE_NEST_PROVIDER)
     private readonly logger2: LoggerService,
     @Inject(Logger) private readonly logger3: LoggerService,
+    private commandBus: CommandBus,
   ) {}
 
   // @UseFilters(HttpExceptionFilter)
@@ -43,8 +46,13 @@ export class UsersController {
   async createUser(@Body() dto: CreateUserDto): Promise<void> {
     this.printWinstonLog(dto);
     const { name, email, password } = dto;
-    await this.usersService.createUser(name, email, password);
-    console.log(dto);
+
+    const command = new CreateUserCommand(name, email, password);
+    return this.commandBus.execute(command);
+
+    // 기존 서비스 로직
+    // await this.usersService.createUser(name, email, password);
+    // console.log(dto);
   }
 
   @Post('/email-verify')
