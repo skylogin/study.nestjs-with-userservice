@@ -10,7 +10,6 @@ import {
   Inject,
   LoggerService,
   Logger,
-  UseFilters,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserLoginDto } from './dto/user-login.dto';
@@ -26,7 +25,6 @@ import {
   WINSTON_MODULE_PROVIDER,
   WINSTON_MODULE_NEST_PROVIDER,
 } from 'nest-winston';
-import { HttpExceptionFilter } from 'src/exception/http-exception.filter';
 
 @Controller('users')
 // @UseFilters(HttpExceptionFilter)

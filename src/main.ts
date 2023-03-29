@@ -41,6 +41,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
   // app.use(Logger3Middleware);
   // app.useGlobalFilters(new HttpExceptionFilter());
+  // app.useGlobalInterceptors(new Loggininterceptor(), new TransformInterceptor());
   app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
   await app.listen(3000);
 }
