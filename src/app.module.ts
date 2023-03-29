@@ -21,6 +21,8 @@ import { LoggerMiddleware } from './logger/logger.middleware';
 import { Logger2Middleware } from './logger/logger2.middleware';
 
 import { UsersModule } from './users/users.module';
+import { ExceptionModule } from './exception/exception.module';
+
 import { AppController } from './app.controller';
 import { UsersController } from './users/users.controller';
 
@@ -55,6 +57,7 @@ import { UsersController } from './users/users.controller';
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: Boolean(process.env.DATABASE_SYNCHRONIZE),
     }),
+    ExceptionModule,
     UsersModule,
   ],
   controllers: [AppController],

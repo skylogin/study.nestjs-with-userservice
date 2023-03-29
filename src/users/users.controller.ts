@@ -10,6 +10,7 @@ import {
   Inject,
   LoggerService,
   Logger,
+  UseFilters,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserLoginDto } from './dto/user-login.dto';
@@ -25,8 +26,10 @@ import {
   WINSTON_MODULE_PROVIDER,
   WINSTON_MODULE_NEST_PROVIDER,
 } from 'nest-winston';
+import { HttpExceptionFilter } from 'src/exception/http-exception.filter';
 
 @Controller('users')
+// @UseFilters(HttpExceptionFilter)
 export class UsersController {
   constructor(
     private usersService: UsersService,
@@ -37,6 +40,7 @@ export class UsersController {
     @Inject(Logger) private readonly logger3: LoggerService,
   ) {}
 
+  // @UseFilters(HttpExceptionFilter)
   @Post()
   async createUser(@Body() dto: CreateUserDto): Promise<void> {
     this.printWinstonLog(dto);

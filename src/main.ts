@@ -10,6 +10,7 @@ import {
   WINSTON_MODULE_NEST_PROVIDER,
   utilities as nestWinstonModuleUtilities,
 } from 'nest-winston';
+import { HttpExceptionFilter } from './exception/http-exception.filter';
 
 // dotenv.config({
 //   path: path.resolve(
@@ -39,6 +40,7 @@ async function bootstrap() {
   });
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
   // app.use(Logger3Middleware);
+  // app.useGlobalFilters(new HttpExceptionFilter());
   app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
   await app.listen(3000);
 }
