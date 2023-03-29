@@ -25,6 +25,7 @@ import { ExceptionModule } from './exception/exception.module';
 
 import { AppController } from './app.controller';
 import { UsersController } from './users/users.controller';
+import { LoggingModule } from './interceptor/logging.module';
 
 @Module({
   imports: [
@@ -58,6 +59,7 @@ import { UsersController } from './users/users.controller';
       synchronize: Boolean(process.env.DATABASE_SYNCHRONIZE),
     }),
     ExceptionModule,
+    LoggingModule,
     UsersModule,
   ],
   controllers: [AppController],
